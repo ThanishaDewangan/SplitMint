@@ -24,6 +24,15 @@ export default async function EditExpensePage({
   });
   if (!expense) notFound();
 
+  // Serialize for ExpenseForm (date must be string; Prisma returns Date)
+  const expenseForForm = {
+    ...expense,
+    date:
+      expense.date instanceof Date
+        ? expense.date.toISOString().slice(0, 10)
+        : String(expense.date),
+  };
+
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <Link
@@ -36,7 +45,7 @@ export default async function EditExpensePage({
       <ExpenseForm
         groupId={id}
         participants={group.participants}
-        expense={expense}
+        expense={expenseForForm}
       />
     </div>
   );
