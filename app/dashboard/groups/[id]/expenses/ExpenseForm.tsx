@@ -15,7 +15,7 @@ type Expense = {
   id: string;
   description: string;
   amount: number;
-  date: string;
+  date: string | Date;
   payerId: string;
   splitMode: string;
   shares: Share[];
