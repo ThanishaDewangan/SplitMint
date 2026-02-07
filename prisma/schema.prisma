@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime       @default(now())
+  groups       Group[]        @relation("PrimaryUser")
+  participants Participant[]  @relation("ParticipantUser")
+}
+
+model Group {
+  id            String       @id @default(cuid())
+  name          String
+  primaryUserId String
+  primaryUser   User         @relation("PrimaryUser", fields: [primaryUserId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  participants  Participant[]
+  expenses      Expense[]
+}
+
+model Participant {
+  id          String        @id @default(cuid())
+  groupId     String
+  group       Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId      String?       // primary user's participant row (one per group)
+  user        User?         @relation("ParticipantUser", fields: [userId], references: [id], onDelete: SetNull)
+  name        String
+  color       String?       // hex or tailwind color name
+  avatarUrl   String?
+  createdAt   DateTime      @default(now())
+  paidExpenses Expense[]    @relation("Payer")
+  expenseShares ExpenseShare[]
+}
+
+model Expense {
+  id          String         @id @default(cuid())
+  groupId     String
+  group       Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  description String
+  amount      Float
+  date        DateTime
+  payerId     String
+  payer       Participant    @relation("Payer", fields: [payerId], references: [id], onDelete: Cascade)
+  splitMode   String         // EQUAL | CUSTOM_AMOUNT | PERCENTAGE
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  shares      ExpenseShare[]
+}
+
+model ExpenseShare {
+  id           String   @id @default(cuid())
+  expenseId    String
+  expense      Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  participantId String
+  participant  Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  amount       Float    // share amount (positive)
+  percentage   Float?   // if splitMode PERCENTAGE
+  createdAt    DateTime @default(now())
+}
