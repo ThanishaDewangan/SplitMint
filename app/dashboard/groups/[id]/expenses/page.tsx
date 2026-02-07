@@ -87,7 +87,10 @@ export default async function GroupExpensesPage({
       <ExpenseListWithFilters
         groupId={id}
         participants={group.participants}
-        expenses={expenses}
+        expenses={expenses.map((e) => ({
+          ...e,
+          date: e.date.toISOString(),
+        }))}
         search={search}
         participantId={participantId}
         dateFrom={dateFrom}
