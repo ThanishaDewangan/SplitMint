@@ -29,6 +29,7 @@ export default async function GroupExpensesPage({
 
   const sp = await searchParams;
   const search = sp.search ?? "";
+
   const participantId = sp.participant ?? "";
   const dateFrom = sp.dateFrom ?? "";
   const dateTo = sp.dateTo ?? "";
