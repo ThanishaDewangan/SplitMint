@@ -126,7 +126,10 @@ export default async function GroupPage({
         </div>
         <ExpenseHistory
           groupId={id}
-          expenses={group.expenses.slice(0, 10)}
+          expenses={group.expenses.slice(0, 10).map((e) => ({
+            ...e,
+            date: e.date.toISOString(),
+          }))}
           participants={group.participants}
           currentUserParticipantId={primaryParticipant?.id ?? null}
         />
