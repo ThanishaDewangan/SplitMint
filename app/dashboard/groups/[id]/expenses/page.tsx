@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ExpenseListWithFilters } from "./ExpenseListWithFilters";
 
+// Group expenses page with filters
 export default async function GroupExpensesPage({
   params,
   searchParams,
