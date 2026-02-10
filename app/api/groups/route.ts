@@ -48,6 +48,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(group);
   } catch (e) {
+    console.error("Error creating group:", e);
     if (e instanceof z.ZodError) {
       return NextResponse.json(
         { error: e.errors.map((x) => x.message).join(", ") },
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
       );
     }
     return NextResponse.json(
-      { error: "Failed to create group" },
+      { error: "Failed to create group", details: e instanceof Error ? e.message : String(e) },
       { status: 500 }
     );
   }
